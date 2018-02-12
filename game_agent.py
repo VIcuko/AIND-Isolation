@@ -1,8 +1,7 @@
 
 import random
 import numpy as np
-import sample_playes
-
+import isolation
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -21,11 +20,11 @@ def custom_score(game, player):
 
     w, h = game.width / 2., game.height / 2.
     y, x = game.get_player_location(player)
-    y2, x2 = game.get_player_location(game.get_opponent(player))
+    b, a = game.get_player_location(game.get_opponent(player))
 
-    distance_to_center = float((h - y)**2 + (w - x)**2)
-    opp_distance_to_center = float((h - y2)**2 + (w - x2)**2)
-    return float((own_moves - opp_moves) + (opp_distance_to_center - distance_to_center)*0.634/(game.move_count))
+    distance_to_center_player = float((h - y)**2 + (w - x)**2)
+    distance_to_center_opponent = float((h - b)**2 + (w - a)**2)
+    return float((own_moves - opp_moves) + (distance_to_center_opp - distance_to_center) * 0.634 / (game.move_count))
 
 
 def custom_score_2(game, player):
