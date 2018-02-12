@@ -24,7 +24,8 @@ def custom_score(game, player):
 
     distance_to_center_player = float((h - y)**2 + (w - x)**2)
     distance_to_center_opponent = float((h - b)**2 + (w - a)**2)
-    return float((own_moves - opp_moves) + (distance_to_center_opp - distance_to_center) * 0.634 / (game.move_count))
+
+    return float((own_moves - opp_moves) + (distance_to_center_opponent - distance_to_center_player) * 0.634 / (game.move_count))
 
 
 def custom_score_2(game, player):
@@ -38,17 +39,22 @@ def custom_score_2(game, player):
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
 
-    pos_y, pos_x = game.get_player_location(player)
-    number_of_boxes_to_center = abs(pos_x - np.ceil(game.width/2)) + \
-    abs(pos_y - np.ceil(game.height/2)) - 1
+    y, x = game.get_player_location(player)
+    boxes_to_center = abs(x - np.ceil(game.width/2)) + \
+    abs(y - np.ceil(game.height/2)) - 1
 
-    if amount_completed(0, 10, game):
-        return 2*own_moves - 0.5*number_of_boxes_to_center
-    elif amount_completed(10, 40, game):
-        return float(3*own_moves - opp_moves - 0.5*number_of_boxes_to_center)
+    surface = game.width * game.height
+
+    percentage_completed = game.move_count / surface
+    
+    if percentage_completed < 0.1:
+        return 2 * own_moves - 0.5 * boxes_to_center
+    
+    elif percentage_completed > 40:
+        return 2 * own_moves - opp_moves
+    
     else:
-        return 2*own_moves - opp_moves
-
+        return float(3 * own_moves - opp_moves - 0.5 * boxes_to_center)
 
 def custom_score_3(game, player):
 
@@ -69,7 +75,7 @@ def custom_score_3(game, player):
 
     w, h = game.get_player_location(game.get_opponent(player))
     y, x = game.get_player_location(player)
-    distance_to_center = float((h - y)**2 + (w - x)**2)
+    distance_to_center_player = float((h - y)**2 + (w - x)**2)
 
     wall_boxes = [(x, y) for x in (0, game.width-1) for y in range(game.width)] + \
     [(x, y) for y in (0, game.height-1) for x in range(game.height)]
@@ -90,16 +96,9 @@ def custom_score_3(game, player):
             quality_of_move -= 1
 
     if amount_completed(0, 40, game):
-        return float(own_moves - opp_moves - distance_to_center + quality_of_move + penalty)
+        return float(own_moves - opp_moves - distance_to_center_player + quality_of_move + penalty)
     else:       
         return own_moves - 2*opp_moves
-
-def amount_completed(low, high, game):
-
-    percent = game.move_count/(game.height * game.width)*100
-    if low <= percent and high > percent:
-        return True
-    return False
 
 class IsolationPlayer:
 
