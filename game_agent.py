@@ -25,7 +25,7 @@ def custom_score(game, player):
     distance_to_center_player = float((h - y)**2 + (w - x)**2)
     distance_to_center_opponent = float((h - b)**2 + (w - a)**2)
 
-    return float((own_moves - opp_moves) + (distance_to_center_opponent - distance_to_center_player) * 0.634 / (game.move_count))
+    return float((own_moves - opp_moves) + (distance_to_center_opponent - distance_to_center_player) * 0.7 / (game.move_count))
 
 
 def custom_score_2(game, player):
@@ -138,7 +138,7 @@ class MinimaxPlayer(IsolationPlayer):
 
     def stuck(self, game, depth):
         self.check_time()
-        return (len(game.get_legal_moves()) == 0 and depth <= 0)
+        return (len(game.get_legal_moves()) == 0 or depth <= 0)
 
     def min_value(self, game, depth):
         self.check_time()
@@ -221,7 +221,7 @@ class AlphaBetaPlayer(IsolationPlayer):
 
     def stuck(self, game, depth):
         self.check_time()
-        return (len(game.get_legal_moves()) == 0 and depth <= 0)
+        return (len(game.get_legal_moves()) == 0 or depth <= 0)
 
     def min_value(self, game, depth, alpha, beta):
         self.check_time()
